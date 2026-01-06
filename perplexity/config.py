@@ -90,7 +90,9 @@ MODEL_MAPPINGS: Dict[str, Dict[str, str]] = {
     "pro": {
         None: "pplx_pro",
         "pplx_pro": "pplx_pro",
+        "pplx-pro": "pplx_pro",
         "pplx_pro_upgraded": "pplx_pro_upgraded",
+        "pplx-pro-upgraded": "pplx_pro_upgraded",
         "sonar": "experimental",
         "experimental": "experimental",
         "gpt-5.2": "gpt52",
@@ -114,7 +116,9 @@ MODEL_MAPPINGS: Dict[str, Dict[str, str]] = {
     "reasoning": {
         None: "pplx_reasoning",
         "pplx_reasoning": "pplx_reasoning",
+        "pplx-reasoning": "pplx_reasoning",
         "pplx_study": "pplx_study",
+        "pplx-study": "pplx_study",
         "gpt-5.2-thinking": "gpt52_thinking",
         "gpt52_thinking": "gpt52_thinking",
         "gpt-5.1-thinking": "gpt51_thinking",
@@ -122,7 +126,9 @@ MODEL_MAPPINGS: Dict[str, Dict[str, str]] = {
         "gpt-5-thinking": "gpt5_thinking",
         "gpt5_thinking": "gpt5_thinking",
         "gpt5_pro": "gpt5_pro",
+        "gpt-5-pro": "gpt5_pro",
         "o3pro": "o3pro",
+        "o3-pro": "o3pro",
         "claude-4.5-sonnet-thinking": "claude45sonnetthinking",
         "claude45sonnetthinking": "claude45sonnetthinking",
         "claude-4.5-opus": "claude45opus",
@@ -150,9 +156,11 @@ MODEL_MAPPINGS: Dict[str, Dict[str, str]] = {
     "deep research": {
         None: "pplx_alpha",
         "pplx_alpha": "pplx_alpha",
+        "pplx-alpha": "pplx_alpha",
         "claude40sonnetthinking_research": "claude40sonnetthinking_research",
         "claude40opusthinking_research": "claude40opusthinking_research",
         "o3pro_research": "o3pro_research",
+        "o3-pro-research": "o3pro_research",
     },
 }
 

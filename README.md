@@ -419,8 +419,15 @@ You can pass either the raw model code (recommended) or a friendly alias.
 }
 ```
 
-Common aliases (examples): `gpt-5.2` -> `gpt52`, `gpt-5.2-thinking` -> `gpt52_thinking`,
-`claude-4.5-sonnet` -> `claude45sonnet`, `grok-4.1` -> `grok41nonreasoning`.
+Common aliases (examples):
+- `gpt-5.2` -> `gpt52`, `gpt-5.1` -> `gpt51`, `gpt-5` -> `gpt5`, `gpt-4.1` -> `gpt41`
+- `gpt-5.2-thinking` -> `gpt52_thinking`, `gpt-5.1-thinking` -> `gpt51_thinking`, `gpt-5-thinking` -> `gpt5_thinking`
+- `claude-4.5-sonnet` -> `claude45sonnet`, `claude-4.5-sonnet-thinking` -> `claude45sonnetthinking`
+- `claude-4.5-opus` -> `claude45opus`, `claude-4.5-opus-thinking` -> `claude45opusthinking`
+- `claude-4.1-opus` -> `claude41opus`, `claude-4.1-opus-thinking` -> `claude41opusthinking`
+- `gemini-3-flash` -> `gemini30flash`, `gemini-3.0-pro` -> `gemini30pro`, `gemini-2.5-pro` -> `gemini25pro`, `gemini-3-flash-high` -> `gemini30flash_high`
+- `grok-4.1` -> `grok41nonreasoning`, `grok-4.1-reasoning` -> `grok41reasoning`, `grok-4` -> `grok4nonthinking`, `grok-4-thinking` -> `grok4`
+- `kimi-k2-thinking` -> `kimik2thinking`
 
 ### File Uploads and Attachments
 
