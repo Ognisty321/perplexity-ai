@@ -36,7 +36,7 @@ class Emailnator(AsyncMixin):
     async def __ainit__(
         self,
         cookies,
-        headers={},
+        headers=None,
         domain=False,
         plus=False,
         dot=False,
@@ -45,7 +45,7 @@ class Emailnator(AsyncMixin):
         self.inbox = []
         self.inbox_ads = []
 
-        if not headers:
+        if headers is None:
             headers = EMAILNATOR_HEADERS.copy()
             headers["x-xsrf-token"] = unquote(cookies["XSRF-TOKEN"])
 
@@ -93,7 +93,7 @@ class Emailnator(AsyncMixin):
                 if msg["messageID"] not in self.inbox_ads and msg not in self.inbox:
                     self.new_msgs.append(msg)
 
-                    if wait_for(msg):
+                    if wait_for and wait_for(msg):
                         wait_for_found = True
 
             if (wait and not self.new_msgs) or wait_for:
@@ -118,7 +118,7 @@ class Emailnator(AsyncMixin):
             )
         ).text
 
-    def get(self, func, msgs=[]):
+    def get(self, func, msgs=None):
         for msg in (msgs if msgs else self.inbox):
             if func(msg):
                 return msg

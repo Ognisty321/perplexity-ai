@@ -16,7 +16,10 @@ API_TIMEOUT = 30
 ENDPOINT_AUTH_SESSION = f"{API_BASE_URL}/api/auth/session"
 ENDPOINT_AUTH_SIGNIN = f"{API_BASE_URL}/api/auth/signin/email"
 ENDPOINT_SSE_ASK = f"{API_BASE_URL}/rest/sse/perplexity_ask"
-ENDPOINT_UPLOAD_URL = f"{API_BASE_URL}/rest/uploads/create_upload_url"
+ENDPOINT_UPLOAD_URL = f"{API_BASE_URL}/rest/uploads/batch_create_upload_urls"
+ENDPOINT_ATTACHMENT_PROCESSING_SUBSCRIBE = (
+    f"{API_BASE_URL}/rest/sse/attachment_processing/subscribe"
+)
 ENDPOINT_SOCKET_IO = f"{API_BASE_URL}/socket.io/"
 
 # Emailnator Configuration
@@ -32,29 +35,125 @@ ACCOUNT_TIMEOUT = 20  # seconds to wait for email
 # Search Modes
 SEARCH_MODES = ["auto", "pro", "reasoning", "deep research"]
 SEARCH_SOURCES = ["web", "scholar", "social"]
-SEARCH_LANGUAGES = ["en-US", "en-GB", "pt-BR", "es-ES", "fr-FR", "de-DE"]
+SEARCH_LANGUAGES = ["en-US", "en-GB", "pt-BR", "es-ES", "fr-FR", "de-DE", "pl-PL"]
+
+# Request Defaults
+DEFAULT_TIMEZONE = "UTC"
+DEFAULT_SEARCH_FOCUS = "internet"
+DEFAULT_PROMPT_SOURCE = "user"
+DEFAULT_QUERY_SOURCE = "home"
+DEFAULT_IS_RELATED_QUERY = False
+DEFAULT_IS_SPONSORED = False
+DEFAULT_LOCAL_SEARCH_ENABLED = False
+DEFAULT_USE_SCHEMATIZED_API = True
+DEFAULT_SEND_BACK_TEXT_IN_STREAMING_API = False
+DEFAULT_SKIP_SEARCH_ENABLED = True
+DEFAULT_NAV_SUGGESTIONS_DISABLED = False
+DEFAULT_ALWAYS_SEARCH_OVERRIDE = False
+DEFAULT_OVERRIDE_NO_SEARCH = False
+DEFAULT_SHOULD_ASK_FOR_MCP_TOOL_CONFIRMATION = True
+DEFAULT_BROWSER_AGENT_ALLOW_ONCE_FROM_TOGGLE = False
+DEFAULT_FORCE_ENABLE_BROWSER_AGENT = False
+DEFAULT_SUPPORTED_BLOCK_USE_CASES = [
+    "answer_modes",
+    "media_items",
+    "knowledge_cards",
+    "inline_entity_cards",
+    "place_widgets",
+    "finance_widgets",
+    "prediction_market_widgets",
+    "sports_widgets",
+    "flight_status_widgets",
+    "news_widgets",
+    "shopping_widgets",
+    "jobs_widgets",
+    "search_result_widgets",
+    "inline_images",
+    "inline_assets",
+    "placeholder_cards",
+    "diff_blocks",
+    "inline_knowledge_cards",
+    "entity_group_v2",
+    "refinement_filters",
+    "canvas_mode",
+    "maps_preview",
+    "answer_tabs",
+    "price_comparison_widgets",
+    "preserve_latex",
+    "in_context_suggestions",
+]
+DEFAULT_SUPPORTED_FEATURES = ["browser_agent_permission_banner_v1.1"]
 
 # Model Mappings
 MODEL_MAPPINGS: Dict[str, Dict[str, str]] = {
     "auto": {None: "turbo"},
     "pro": {
         None: "pplx_pro",
+        "pplx_pro": "pplx_pro",
+        "pplx_pro_upgraded": "pplx_pro_upgraded",
         "sonar": "experimental",
-        "gpt-4.5": "gpt45",
-        "gpt-4o": "gpt4o",
-        "claude 3.7 sonnet": "claude2",
-        "gemini 2.0 flash": "gemini2flash",
-        "grok-2": "grok",
+        "experimental": "experimental",
+        "gpt-5.2": "gpt52",
+        "gpt52": "gpt52",
+        "gpt-5.1": "gpt51",
+        "gpt51": "gpt51",
+        "gpt-5": "gpt5",
+        "gpt5": "gpt5",
+        "gpt-4.1": "gpt41",
+        "gpt41": "gpt41",
+        "claude-4.5-sonnet": "claude45sonnet",
+        "claude45sonnet": "claude45sonnet",
+        "gemini-3-flash": "gemini30flash",
+        "gemini30flash": "gemini30flash",
+        "grok-4.1": "grok41nonreasoning",
+        "grok41nonreasoning": "grok41nonreasoning",
+        "grok-4-1": "grok41nonreasoning",
+        "grok-4": "grok4nonthinking",
+        "grok4nonthinking": "grok4nonthinking",
     },
     "reasoning": {
         None: "pplx_reasoning",
-        "r1": "r1",
-        "o3-mini": "o3mini",
-        "claude 3.7 sonnet": "claude37sonnetthinking",
-        "gpt5": "gpt5",
-        "gpt5_thinking": "gpt5thinking",
+        "pplx_reasoning": "pplx_reasoning",
+        "pplx_study": "pplx_study",
+        "gpt-5.2-thinking": "gpt52_thinking",
+        "gpt52_thinking": "gpt52_thinking",
+        "gpt-5.1-thinking": "gpt51_thinking",
+        "gpt51_thinking": "gpt51_thinking",
+        "gpt-5-thinking": "gpt5_thinking",
+        "gpt5_thinking": "gpt5_thinking",
+        "gpt5_pro": "gpt5_pro",
+        "o3pro": "o3pro",
+        "claude-4.5-sonnet-thinking": "claude45sonnetthinking",
+        "claude45sonnetthinking": "claude45sonnetthinking",
+        "claude-4.5-opus": "claude45opus",
+        "claude45opus": "claude45opus",
+        "claude-4.5-opus-thinking": "claude45opusthinking",
+        "claude45opusthinking": "claude45opusthinking",
+        "claude-4.1-opus": "claude41opus",
+        "claude41opus": "claude41opus",
+        "claude-4.1-opus-thinking": "claude41opusthinking",
+        "claude41opusthinking": "claude41opusthinking",
+        "gemini-3.0-pro": "gemini30pro",
+        "gemini30pro": "gemini30pro",
+        "gemini-2.5-pro": "gemini25pro",
+        "gemini25pro": "gemini25pro",
+        "gemini-3-flash-high": "gemini30flash_high",
+        "gemini30flash_high": "gemini30flash_high",
+        "kimi-k2-thinking": "kimik2thinking",
+        "kimik2thinking": "kimik2thinking",
+        "grok-4.1-reasoning": "grok41reasoning",
+        "grok41reasoning": "grok41reasoning",
+        "grok-4-1-reasoning": "grok41reasoning",
+        "grok-4-thinking": "grok4",
+        "grok4": "grok4",
     },
-    "deep research": {None: "pplx_alpha"},
+    "deep research": {
+        None: "pplx_alpha",
+        "pplx_alpha": "pplx_alpha",
+        "claude40sonnetthinking_research": "claude40sonnetthinking_research",
+        "claude40opusthinking_research": "claude40opusthinking_research",
+        "o3pro_research": "o3pro_research",
+    },
 }
 
 # Labs Models
@@ -64,6 +163,10 @@ LABS_MODELS = [
     "sonar",
     "sonar-reasoning-pro",
     "sonar-reasoning",
+    "claude40sonnetthinking_labs",
+    "claude40opusthinking_labs",
+    "o3pro_labs",
+    "pplx_beta",
 ]
 
 # HTTP Headers Template

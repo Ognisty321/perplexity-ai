@@ -117,7 +117,7 @@ client = perplexity.Client(cookies)
 response = client.search(
     "Complex query here",
     mode='pro',
-    model='gpt-4.5',
+    model='gpt-5.2',
     sources=['scholar']
 )
 ```
@@ -185,19 +185,25 @@ import perplexity
 
 perplexity_cli = perplexity.Client()
 
-# model = model for mode, which can only be used in own accounts, that is {
-#     'auto': [None],
-#     'pro': [None, 'sonar', 'gpt-5.1', 'claude-4.5-sonnet', 'gemini-2.5-pro', 'grok-4'],
-#     'reasoning': [None, 'gpt-5.1-thingking', 'claude-4.5-sonnet-thinking', 'gemini-3.0-pro', 'kimi-k2-thinking'],
-#     'deep research': [None]
-# }
+# model = model for mode (own account only). See "Available Models" below.
 # sources = ['web', 'scholar', 'social']
 # files = a dictionary which has keys as filenames and values as file data
 # stream = returns a generator when enabled and just final response when disabled
 # language = ISO 639 code of language you want to use
 # follow_up = last query info for follow-up queries, you can directly pass response from a query, look at second example below
 # incognito = Enables incognito mode, for people who are using their own account
-resp = perplexity_cli.search('Your query here', mode='auto', model=None, sources=['web'], files={}, stream=False, language='en-US', follow_up=None, incognito=False)
+resp = perplexity_cli.search(
+    'Your query here',
+    mode='auto',
+    model=None,
+    sources=['web'],
+    files={},
+    stream=False,
+    language='en-US',
+    timezone='Europe/Warsaw',
+    follow_up=None,
+    incognito=False,
+)
 print(resp)
 
 # second example to show how to use follow-up queries and stream response
@@ -216,7 +222,7 @@ perplexity_cookies = {
 
 perplexity_cli = perplexity.Client(perplexity_cookies)
 
-resp = perplexity_cli.search('Your query here', mode='reasoning', model='o3', sources=['web'], files={'myfile.txt': open('file.txt').read()}, stream=False, language='en-US', follow_up=None, incognito=False)
+resp = perplexity_cli.search('Your query here', mode='reasoning', model='gpt-5.2-thinking', sources=['web'], files={'myfile.txt': open('file.txt').read()}, stream=False, language='en-US', follow_up=None, incognito=False)
 print(resp)
 ```
 
@@ -248,19 +254,25 @@ async def test():
     perplexity_cli = await perplexity_async.Client()
 
     # mode = ['auto', 'pro', 'reasoning', 'deep research']
-    # model = model for mode, which can only be used in own accounts, that is {
-    #     'auto': [None],
-    #     'pro': [None, 'sonar', 'gpt-5.1', 'claude-4.5-sonnet', 'gemini-2.5-pro', 'grok-4'],
-    #     'reasoning': [None, 'gpt-5.1-thingking', 'claude-4.5-sonnet-thinking', 'gemini-3.0-pro', 'kimi-k2-thinking'],
-    #     'deep research': [None]
-    # }
+    # model = model for mode (own account only). See "Available Models" below.
     # sources = ['web', 'scholar', 'social']
     # files = a dictionary which has keys as filenames and values as file data
     # stream = returns a generator when enabled and just final response when disabled
     # language = ISO 639 code of language you want to use
     # follow_up = last query info for follow-up queries, you can directly pass response from a query, look at second example below
     # incognito = Enables incognito mode, for people who are using their own account
-    resp = await perplexity_cli.search('Your query here', mode='auto', model=None, sources=['web'], files={}, stream=False, language='en-US', follow_up=None, incognito=False)
+    resp = await perplexity_cli.search(
+        'Your query here',
+        mode='auto',
+        model=None,
+        sources=['web'],
+        files={},
+        stream=False,
+        language='en-US',
+        timezone='Europe/Warsaw',
+        follow_up=None,
+        incognito=False,
+    )
     print(resp)
 
     # second example to show how to use follow-up queries and stream response
@@ -283,7 +295,7 @@ perplexity_cookies = {
 async def test():
     perplexity_cli = await perplexity_async.Client(perplexity_cookies)
 
-    resp = await perplexity_cli.search('Your query here', mode='reasoning', model='o3', sources=['web'], files={'myfile.txt': open('file.txt').read()}, stream=False, language='en-US', follow_up=None, incognito=False)
+    resp = await perplexity_cli.search('Your query here', mode='reasoning', model='gpt-5.2-thinking', sources=['web'], files={'myfile.txt': open('file.txt').read()}, stream=False, language='en-US', follow_up=None, incognito=False)
     print(resp)
 
 asyncio.run(test())
@@ -336,7 +348,13 @@ asyncio.run(test())
 
 ```python
 class Client:
-    def __init__(self, cookies: Optional[Dict[str, str]] = None):
+    def __init__(
+        self,
+        cookies: Optional[Dict[str, str]] = None,
+        *,
+        headers: Optional[Dict[str, str]] = None,
+        timeout: float = 30.0
+    ):
         """
         Initialize Perplexity client.
         
@@ -349,12 +367,24 @@ class Client:
         query: str,
         mode: str = 'auto',
         model: Optional[str] = None,
-        sources: List[str] = ['web'],
-        files: Dict[str, Union[str, bytes]] = {},
+        sources: Optional[List[str]] = None,
+        files: Optional[Dict[str, Union[str, bytes]]] = None,
         stream: bool = False,
         language: str = 'en-US',
         follow_up: Optional[Dict] = None,
-        incognito: bool = False
+        incognito: bool = False,
+        timezone: Optional[str] = None,
+        search_focus: Optional[str] = None,
+        search_recency_filter: Optional[str] = None,
+        prompt_source: Optional[str] = None,
+        query_source: Optional[str] = None,
+        supported_block_use_cases: Optional[List[str]] = None,
+        supported_features: Optional[List[str]] = None,
+        time_from_first_type: Optional[float] = None,
+        dsl_query: Optional[str] = None,
+        params_overrides: Optional[Dict[str, object]] = None,
+        wait_for_attachment_processing: bool = False,
+        attachment_processing_timeout: Optional[float] = None
     ) -> Union[Dict, Generator]:
         """
         Search with Perplexity AI.
@@ -369,6 +399,18 @@ class Client:
             language: ISO 639 language code
             follow_up: Previous query for context
             incognito: Enable incognito mode
+            timezone: IANA timezone name (e.g., "Europe/Warsaw")
+            search_focus: Search focus (e.g., "internet")
+            search_recency_filter: Optional recency filter
+            prompt_source: Prompt source tag (defaults to "user")
+            query_source: Query source tag (defaults to "home")
+            supported_block_use_cases: List of supported block use cases
+            supported_features: List of supported feature flags
+            time_from_first_type: Client timing hint (float)
+            dsl_query: Optional DSL query string
+            params_overrides: Dict of raw params to override in payload
+            wait_for_attachment_processing: Wait for attachment processing SSE before query
+            attachment_processing_timeout: Optional timeout override for attachment processing SSE
             
         Returns:
             Response dict with 'answer' key, or generator if stream=True
@@ -385,13 +427,68 @@ class Client:
 
 ### Available Models
 
+You can pass either the raw model code (recommended) or a friendly alias.
+
 ```python
 {
     'auto': [None],
-    'pro': [None, 'sonar', 'gpt-5.1', 'claude-4.5-sonnet', 'gemini-2.5-pro', 'grok-4'],
-    'reasoning': [None, 'gpt-5.1-thinking', 'claude-4.5-sonnet-thinking', 'gemini-3.0-pro', 'kimi-k2-thinking'],
-    'deep research': [None]
+    'pro': [
+        None,
+        'pplx_pro', 'pplx_pro_upgraded',
+        'experimental',  # Sonar
+        'gpt52', 'gpt51', 'gpt5', 'gpt41',
+        'claude45sonnet',
+        'gemini30flash',
+        'grok41nonreasoning', 'grok4nonthinking',
+    ],
+    'reasoning': [
+        None,
+        'pplx_reasoning', 'pplx_study',
+        'gpt52_thinking', 'gpt51_thinking', 'gpt5_thinking', 'gpt5_pro',
+        'o3pro',
+        'claude45sonnetthinking', 'claude45opus', 'claude45opusthinking',
+        'claude41opus', 'claude41opusthinking',
+        'gemini30pro', 'gemini25pro', 'gemini30flash_high',
+        'kimik2thinking',
+        'grok41reasoning', 'grok4',
+    ],
+    'deep research': [
+        None,
+        'pplx_alpha',
+        'claude40sonnetthinking_research', 'claude40opusthinking_research',
+        'o3pro_research',
+    ],
 }
+```
+
+Common aliases (examples): `gpt-5.2` -> `gpt52`, `gpt-5.2-thinking` -> `gpt52_thinking`,
+`claude-4.5-sonnet` -> `claude45sonnet`, `grok-4.1` -> `grok41nonreasoning`.
+
+### File Uploads and Attachments
+
+File uploads are sent via the batch upload endpoint and then referenced as attachment URLs in
+the query payload. If you want to mirror the browser flow, enable
+`wait_for_attachment_processing` to subscribe to the attachment processing SSE before the query.
+
+```python
+from perplexity import Client
+
+with Client(cookies=COOKIES) as client:
+    result = client.search(
+        "Summarize the attached subtitles.",
+        mode="pro",
+        files={"episode.ass": open("episode.ass", "rb").read()},
+        wait_for_attachment_processing=True,
+    )
+    print(result.get("answer"))
+```
+
+You can also run the integration upload test script locally using environment variables:
+
+```bash
+cp .env.example .env
+# Fill PPLX_CSRF_TOKEN and PPLX_SESSION_TOKEN in .env
+python3 scripts/integration_upload_test.py
 ```
 
 ### Custom Exceptions
@@ -414,20 +511,20 @@ from perplexity.exceptions import (
 ### Run All Tests
 
 ```bash
-pytest tests/ -v
+python3 -m pytest tests/ -v
 ```
 
 ### With Coverage
 
 ```bash
-pytest tests/ --cov=perplexity --cov=perplexity_async --cov-report=html
+python3 -m pytest tests/ --cov=perplexity --cov=perplexity_async --cov-report=html
 ```
 
 ### Run Specific Tests
 
 ```bash
-pytest tests/test_utils.py -v
-pytest tests/test_config.py -v
+python3 -m pytest tests/test_utils.py -v
+python3 -m pytest tests/test_config.py -v
 ```
 
 ## Development
@@ -443,7 +540,7 @@ cd perplexity-ai
 pip install -e ".[dev]"
 
 # Run tests
-pytest
+python3 -m pytest
 
 # Format code
 black perplexity perplexity_async

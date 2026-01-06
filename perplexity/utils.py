@@ -8,7 +8,7 @@ and other common operations.
 import time
 import random
 from functools import wraps
-from typing import Any, Callable, Optional, Tuple, Type
+from typing import Any, Callable, Dict, Optional, Tuple, Type
 
 from .exceptions import ValidationError
 from .config import (
@@ -230,8 +230,45 @@ def validate_file_data(files: dict) -> None:
         if not filename.strip():
             raise ValidationError("Filename cannot be empty")
 
-        if not isinstance(data, (bytes, str)):
-            raise ValidationError(f"File data must be bytes or string, got {type(data)}")
+        if not isinstance(data, (bytes, bytearray, memoryview, str)):
+            raise ValidationError(
+                "File data must be bytes-like or string, "
+                f"got {type(data)}"
+            )
+
+
+def normalize_files(files: dict) -> Dict[str, bytes]:
+    """
+    Normalize file data to bytes.
+
+    Args:
+        files: Dictionary with filenames as keys and file data as values
+
+    Returns:
+        Dictionary with filenames and bytes payloads
+
+    Raises:
+        ValidationError: If file data is invalid
+    """
+    validate_file_data(files)
+
+    normalized: Dict[str, bytes] = {}
+    for filename, data in files.items():
+        if isinstance(data, memoryview):
+            data = data.tobytes()
+        elif isinstance(data, bytearray):
+            data = bytes(data)
+        elif isinstance(data, str):
+            data = data.encode("utf-8")
+
+        if not isinstance(data, bytes):
+            raise ValidationError(
+                f"File data for '{filename}' could not be normalized to bytes"
+            )
+
+        normalized[filename] = data
+
+    return normalized
 
 
 def sanitize_query(query: str) -> str:
@@ -307,3 +344,38 @@ def parse_nested_json_response(content_json: dict) -> dict:
             pass
 
     return content_json
+
+
+def parse_sse_chunk(chunk: str) -> tuple[Optional[str], Optional[dict]]:
+    """
+    Parse a single SSE chunk into (event, data) pair.
+
+    Args:
+        chunk: SSE chunk string
+
+    Returns:
+        Tuple of (event_name, parsed_data) where parsed_data is a dict for message events
+    """
+    import json
+
+    event = None
+    data_lines = []
+
+    for line in chunk.splitlines():
+        if line.startswith("event:"):
+            event = line[len("event:") :].strip()
+        elif line.startswith("data:"):
+            data_lines.append(line[len("data:") :].strip())
+
+    data = "\n".join(data_lines) if data_lines else None
+
+    if event == "message" and data:
+        try:
+            payload = json.loads(data)
+        except json.JSONDecodeError:
+            return event, None
+
+        payload = parse_nested_json_response(payload)
+        return event, payload
+
+    return event, None
